@@ -6,6 +6,10 @@ class BasicCard extends StatelessWidget {
   final Color backgroundColor;
   final double borderRadius;
   final BoxShadow? shadow;
+  final int maxHeight;
+  final int maxWidth;
+  final int height;
+  final int width;
 
   const BasicCard({
     Key? key,
@@ -13,12 +17,22 @@ class BasicCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(16.0),
     this.backgroundColor = Colors.white,
     this.borderRadius = 12.0,
-    this.shadow,
+    this.shadow, 
+    this.maxHeight = 300,
+    this.maxWidth = 400,
+    this.height = 200,
+    this.width = 300,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: height.toDouble(),
+      width: width.toDouble(),
+      constraints: BoxConstraints(
+          maxHeight: maxHeight.toDouble(),
+          maxWidth: maxWidth.toDouble(),
+        ),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(borderRadius),
