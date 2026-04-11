@@ -1,3 +1,4 @@
+import 'package:app_mobile/view/widgets/basic_card.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -10,7 +11,7 @@ class LoginScreen extends StatelessWidget {
         title: const Text('Login'),
       ),
       body: const Center(
-        child: Text('Login Screen'),
+        child: BasicCard(child:   Text('Login Form Goes Here')),
       ),
     );
   }
