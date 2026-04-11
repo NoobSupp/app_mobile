@@ -1,17 +1,27 @@
 # app_mobile
 
-A new Flutter project.
+Este projeto é um trabalho da disciplina de Desenvolvimento Mobile.
 
-## Getting Started
+O objetivo é implementar um aplicativo Flutter para cadastro de cursos e inscrições em cursos de catequese.
 
-This project is a starting point for a Flutter application.
+## Descrição do projeto
 
-A few resources to get you started if this is your first Flutter project:
+O app deve permitir:
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- Cadastrar cursos de catequese
+- Listar os cursos disponíveis
+- Permitir que usuários se inscrevam nos cursos
+- Exibir uma landing page inicial com navegação para as funcionalidades
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Tela inicial e navegação
+
+O aplicativo já possui uma tela de login e uma landing page (home) com base para interações.
+
+## Tecnologias
+
+- Flutter
+- Dart
+
+## Observações
+
+Este repositório serve como base para o trabalho, com estrutura inicial para construir o fluxo de cursos e inscrições de catequese.
