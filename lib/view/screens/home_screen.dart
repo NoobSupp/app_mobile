@@ -1,13 +1,16 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:app_mobile/view/widgets/basic_card.dart';
-
+import 'package:app_mobile/view/widgets/navbar.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
 Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        centerTitle: true,
+        title: const Text('Home',textAlign: TextAlign.center,),
       ),
       body: Center(
         child: BasicCard(
@@ -21,6 +24,7 @@ Widget build(BuildContext context) {
           ),
         ),
       ),
+      bottomNavigationBar: const navbar(),
     );
   }
 }
