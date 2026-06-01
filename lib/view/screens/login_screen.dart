@@ -1,6 +1,5 @@
-import 'package:app_mobile/view/widgets/basic_card.dart';
+import 'package:app_mobile/view/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

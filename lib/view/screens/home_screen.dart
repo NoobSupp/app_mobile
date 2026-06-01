@@ -1,24 +1,20 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:app_mobile/view/widgets/basic_card.dart';
+import 'package:app_mobile/view/widgets/app_widgets.dart';
 import 'package:app_mobile/view/widgets/navbar.dart';
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Home',textAlign: TextAlign.center,),
-      ),
+  @override
+  Widget build(BuildContext context) {
+    return AppScaffold(
+      title: 'Home',
       body: Center(
-        child: BasicCard(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+        child: AppCard(
+          child: AppSection(
+            spacing: 14,
             children: const [
               Text('Welcome to the Home Screen!'),
-              SizedBox(height: 16.0),
               Text('This is a basic card widget.'),
             ],
           ),

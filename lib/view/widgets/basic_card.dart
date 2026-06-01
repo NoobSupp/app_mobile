@@ -1,51 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:app_mobile/view/theme/app_theme.dart';
 
 class BasicCard extends StatelessWidget {
   final Widget child;
-  final EdgeInsets padding;
-  final Color backgroundColor;
+  final EdgeInsetsGeometry? padding;
+  final Color? backgroundColor;
   final double borderRadius;
-  final BoxShadow? shadow;
-  final int maxHeight;
-  final int maxWidth;
-  final int height;
-  final int width;
+  final List<BoxShadow>? shadow;
+  final double? maxHeight;
+  final double? maxWidth;
+  final double? height;
+  final double? width;
 
   const BasicCard({
     Key? key,
     required this.child,
-    this.padding = const EdgeInsets.all(16.0),
-    this.backgroundColor = Colors.white,
-    this.borderRadius = 12.0,
-    this.shadow, 
-    this.maxHeight = 300,
-    this.maxWidth = 400,
-    this.height = 200,
-    this.width = 300,
+    this.padding,
+    this.backgroundColor,
+    this.borderRadius = AppBorderRadius.medium,
+    this.shadow,
+    this.maxHeight,
+    this.maxWidth,
+    this.height,
+    this.width,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: height.toDouble(),
-      width: width.toDouble(),
+      height: height,
+      width: width,
       constraints: BoxConstraints(
-          maxHeight: maxHeight.toDouble(),
-          maxWidth: maxWidth.toDouble(),
-        ),
+        maxHeight: maxHeight ?? double.infinity,
+        maxWidth: maxWidth ?? double.infinity,
+      ),
       decoration: BoxDecoration(
-        color: backgroundColor,
+        color: backgroundColor ?? AppColors.surface,
         borderRadius: BorderRadius.circular(borderRadius),
-        boxShadow: shadow != null ? [shadow!] : [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8.0,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: shadow ?? AppShadow.card,
       ),
       child: Padding(
-        padding: padding,
+        padding: padding ?? AppSpacing.all(context, 18),
         child: child,
       ),
     );
