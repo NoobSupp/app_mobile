@@ -1,4 +1,5 @@
 import 'package:app_mobile/controller/course_service.dart';
+import 'package:app_mobile/controller/login_service.dart';
 import 'package:app_mobile/model/course.dart';
 import 'package:flutter/material.dart';
 import 'package:app_mobile/view/widgets/app_widgets.dart';
@@ -15,9 +16,11 @@ enum CourseStatus { loading, success, error }
 
 class _HomeScreenState extends State<HomeScreen> {
   final CourseService _courseService = CourseService();
+  final LoginService _loginService = LoginService();
   CourseStatus _status = CourseStatus.loading;
   List<Course> _courses = [];
   String? _errorMessage;
+  String? _username;
 
   @override
   void initState() {
@@ -26,11 +29,23 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadCourses() async {
+    // Recuperar username armazenado
+    final storedCredentials = await _loginService.getStoredCredentials();
+    _username = storedCredentials?.username;
+
+    if (_username == null) {
+      setState(() {
+        _status = CourseStatus.error;
+        _errorMessage = 'Usuário não encontrado. Faça login novamente.';
+      });
+      return;
+    }
+
     setState(() {
       _status = CourseStatus.loading;
     });
 
-    final result = await _courseService.getCourses(1); // hardcoded user_id=1 for now
+    final result = await _courseService.getCourses(_username!);
 
     if (!mounted) return;
 

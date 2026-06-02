@@ -1,20 +1,23 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginResult {
   final bool success;
   final int statusCode;
   final String? body;
   final String? errorMessage;
+  final String? username;
 
-  LoginResult.success({required this.statusCode, this.body})
+  LoginResult.success({required this.statusCode, this.body, this.username})
       : success = true,
         errorMessage = null;
 
   LoginResult.failure({required this.statusCode, this.errorMessage})
       : success = false,
-        body = null;
+        body = null,
+        username = null;
 }
 
 class LoginService {
@@ -36,7 +39,8 @@ class LoginService {
       ).timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
-        return LoginResult.success(statusCode: response.statusCode, body: response.body);
+        await _saveLoginCredentials(username, password);
+        return LoginResult.success(statusCode: response.statusCode, body: response.body, username: username);
       }
 
       return LoginResult.failure(
@@ -46,5 +50,28 @@ class LoginService {
     } catch (error) {
       return LoginResult.failure(statusCode: 0, errorMessage: error.toString());
     }
+  }
+
+  Future<void> _saveLoginCredentials(String username, String password) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', username);
+    await prefs.setString('password', password);
+  }
+
+  Future<LoginResult?> getStoredCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    final username = prefs.getString('username');
+    final password = prefs.getString('password');
+
+    if (username != null && password != null) {
+      return LoginResult.success(statusCode: 200, username: username);
+    }
+    return null;
+  }
+
+  Future<void> clearStoredCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('username');
+    await prefs.remove('password');
   }
 }

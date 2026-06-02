@@ -24,6 +24,14 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     _usernameController = TextEditingController();
     _passwordController = TextEditingController();
+    _checkStoredCredentials();
+  }
+
+  Future<void> _checkStoredCredentials() async {
+    final storedCredentials = await _loginService.getStoredCredentials();
+    if (storedCredentials != null && storedCredentials.username != null) {
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+    }
   }
 
   @override

@@ -22,8 +22,8 @@ class CourseService {
 
   CourseService({http.Client? client}) : _client = client ?? http.Client();
 
-  Future<CourseResult> getCourses(int userId) async {
-    final uri = Uri.parse('http://localhost:4000/cursos?user_id=$userId');
+  Future<CourseResult> getCourses(String username) async {
+    final uri = Uri.parse('https://deepness-legend-phrase.ngrok-free.dev/cursos?username=$username');
 
     try {
       final response = await _client.post(
