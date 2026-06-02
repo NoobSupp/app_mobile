@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return AppScaffold(
       title: 'Cursos',
       body: _buildBody(),
-      bottomNavigationBar: const navbar(),
+      bottomNavigationBar: const navbar(currentIndex: 1),
     );
   }
 

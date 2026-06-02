@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:app_mobile/controller/login_service.dart';
 import 'package:app_mobile/view/screens/login_screen.dart';
 import 'package:app_mobile/view/screens/home_screen.dart';
+import 'package:app_mobile/view/screens/user_screen.dart';
 import 'package:app_mobile/view/theme/app_theme.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await LoginService().clearStoredCredentials();
   runApp(const MyApp());
 }
 
@@ -20,6 +24,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => const LoginScreen(),
         '/home': (context) => const HomeScreen(),
+        '/user': (context) => const UserScreen(),
       },
     );
   }

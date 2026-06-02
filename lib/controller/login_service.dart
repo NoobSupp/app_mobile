@@ -9,15 +9,25 @@ class LoginResult {
   final String? body;
   final String? errorMessage;
   final String? username;
+  final String? password;
+  final String? userId;
 
-  LoginResult.success({required this.statusCode, this.body, this.username})
+  LoginResult.success({
+    required this.statusCode,
+    this.body,
+    this.username,
+    this.password,
+    this.userId,
+  })
       : success = true,
         errorMessage = null;
 
   LoginResult.failure({required this.statusCode, this.errorMessage})
       : success = false,
         body = null,
-        username = null;
+        username = null,
+        password = null,
+        userId = null;
 }
 
 class LoginService {
@@ -39,8 +49,26 @@ class LoginService {
       ).timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
-        await _saveLoginCredentials(username, password);
-        return LoginResult.success(statusCode: response.statusCode, body: response.body, username: username);
+        // Tentar extrair user_id da resposta
+        String? userId;
+        try {
+          final jsonResponse = json.decode(response.body);
+          // Tente diferentes nomes de campo comuns
+          userId = jsonResponse['user_id']?.toString() ??
+              jsonResponse['userId']?.toString() ??
+              jsonResponse['id']?.toString();
+        } catch (e) {
+          // Se não conseguir fazer parse, continua sem userId
+        }
+
+        await _saveLoginCredentials(username, password, userId);
+        return LoginResult.success(
+          statusCode: response.statusCode,
+          body: response.body,
+          username: username,
+          password: password,
+          userId: userId,
+        );
       }
 
       return LoginResult.failure(
@@ -52,19 +80,28 @@ class LoginService {
     }
   }
 
-  Future<void> _saveLoginCredentials(String username, String password) async {
+  Future<void> _saveLoginCredentials(String username, String password, String? userId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('username', username);
     await prefs.setString('password', password);
+    if (userId != null) {
+      await prefs.setString('user_id', userId);
+    }
   }
 
   Future<LoginResult?> getStoredCredentials() async {
     final prefs = await SharedPreferences.getInstance();
     final username = prefs.getString('username');
     final password = prefs.getString('password');
+    final userId = prefs.getString('user_id');
 
     if (username != null && password != null) {
-      return LoginResult.success(statusCode: 200, username: username);
+      return LoginResult.success(
+        statusCode: 200,
+        username: username,
+        password: password,
+        userId: userId,
+      );
     }
     return null;
   }
@@ -73,5 +110,6 @@ class LoginService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('username');
     await prefs.remove('password');
+    await prefs.remove('user_id');
   }
 }

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:app_mobile/model/course.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CourseResult {
   final bool success;
@@ -22,11 +23,35 @@ class CourseService {
 
   CourseService({http.Client? client}) : _client = client ?? http.Client();
 
-  Future<CourseResult> getCourses(String username) async {
-    final uri = Uri.parse('https://deepness-legend-phrase.ngrok-free.dev/cursos?username=$username');
-
+  Future<CourseResult> getCourses([String? usernameParam]) async {
     try {
-      final response = await _client.post(
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString('user_id');
+      final username = usernameParam ?? prefs.getString('username');
+      final password = prefs.getString('password');
+
+      if (username == null || password == null) {
+        return CourseResult.failure(
+          errorMessage: 'Usuario nao autenticado. Faca login novamente.',
+        );
+      }
+
+      final queryParameters = <String, String>{
+        'username': username,
+        'password': password,
+      };
+
+      if (userId != null) {
+        queryParameters['user_id'] = userId;
+      }
+
+      final uri = Uri.https(
+        'deepness-legend-phrase.ngrok-free.dev',
+        '/cursos',
+        queryParameters,
+      );
+
+      final response = await _client.get(
         uri,
         headers: {'Content-Type': 'application/json'},
       ).timeout(const Duration(seconds: 15));
@@ -38,7 +63,8 @@ class CourseService {
       }
 
       return CourseResult.failure(
-        errorMessage: response.body.isNotEmpty ? response.body : 'Falha ao carregar cursos',
+        errorMessage:
+            response.body.isNotEmpty ? response.body : 'Falha ao carregar cursos',
       );
     } catch (error) {
       return CourseResult.failure(errorMessage: error.toString());
