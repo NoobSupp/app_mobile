@@ -7,3 +7,4 @@ export 'app_spacer.dart';
 export 'basic_card.dart';
 export 'loading_modal.dart';
 export 'navbar.dart';
+export 'course_card.dart';

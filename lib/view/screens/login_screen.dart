@@ -1,7 +1,7 @@
 
+import 'package:app_mobile/controller/login_service.dart';
 import 'package:app_mobile/view/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,9 +10,14 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
+enum LoginStatus { idle, loading, error }
+
 class _LoginScreenState extends State<LoginScreen> {
+  final LoginService _loginService = LoginService();
   late TextEditingController _usernameController;
   late TextEditingController _passwordController;
+  LoginStatus _status = LoginStatus.idle;
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -39,62 +44,46 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    // show loading modal (uses styled LoadingModal from widgets)
+    setState(() {
+      _status = LoginStatus.loading;
+      _errorMessage = null;
+    });
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => const LoadingModal(),
     );
 
-    try {
-      final uri = Uri.https(
-        'deepness-legend-phrase.ngrok-free.dev',
-        '/login',
-        {
-          'username': username,
-          'password': password,
-        },
-      );
+    final result = await _loginService.login(username, password);
 
-      final response = await http.get(uri).timeout(const Duration(seconds: 15));
+    if (!mounted) return;
 
-      if (!mounted) return;
+    Navigator.of(context, rootNavigator: true).pop();
 
-      Navigator.of(context, rootNavigator: true).pop(); // close loading
+    setState(() {
+      _status = result.success ? LoginStatus.idle : LoginStatus.error;
+      _errorMessage = result.errorMessage;
+    });
 
-      if (response.statusCode == 200) {
-        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-      } else {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Erro'),
-            content: Text('Falha no login: ${response.statusCode}'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) Navigator.of(context, rootNavigator: true).pop();
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Erro'),
-          content: Text('Erro ao conectar: $e'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+    if (result.success) {
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+      return;
     }
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Erro'),
+        content: Text(result.errorMessage ?? 'Erro ao conectar'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
